@@ -2,6 +2,7 @@ package com.cybernetic.home;
 
 import java.security.Principal;
 
+import com.cybernetic.example.CostMatrixVRPTW;
 import com.cybernetic.example.SimpleExample;
 import com.cybernetic.mapquest.MapQuestClient;
 import org.slf4j.Logger;
@@ -18,7 +19,7 @@ public class HomeController {
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(Principal principal) {
-		SimpleExample.test();
+		CostMatrixVRPTW.test();
 		LOGGER.info(new MapQuestClient().getRoute().findValue(DISTANCE).toString());
 		return principal != null ? "home/homeSignedIn" : "home/homeNotSignedIn";
 	}

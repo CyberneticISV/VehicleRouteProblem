@@ -1,3 +1,5 @@
 .idea/
-VehicleRouteProblem.iml
+*.iml
 target/
+output/
+
