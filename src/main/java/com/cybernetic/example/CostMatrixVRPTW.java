@@ -36,13 +36,13 @@ import java.util.Collection;
 
 public class CostMatrixVRPTW {
 
-    public static void test() {
+    public static void calculate(int vehicleNumber) {
         /*
 		 * some preparation - create output folder
 		 */
         Examples.createOutputFolder();
-
-        int vehicleNumber = 10;
+/*
+        int vehicleNumber = 10;*/
 
         //describe vehicle type
         VehicleType type = VehicleTypeImpl.Builder.newInstance("type")

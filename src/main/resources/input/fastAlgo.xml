@@ -31,7 +31,7 @@
 				<probability>0.5</probability>
 			</searchStrategy>
 			
-			<searchStrategy name="radialRuinAndRecreate">
+			<searchStrategy name="radialRuinAndRecreate1">
 				<selector name="selectBest"/>
 				<acceptor name="acceptNewRemoveWorst"/>
 					
