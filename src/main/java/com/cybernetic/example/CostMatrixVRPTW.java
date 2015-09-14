@@ -41,8 +41,6 @@ public class CostMatrixVRPTW {
 		 * some preparation - create output folder
 		 */
         Examples.createOutputFolder();
-/*
-        int vehicleNumber = 10;*/
 
         //describe vehicle type
         VehicleType type = VehicleTypeImpl.Builder.newInstance("type")
@@ -67,8 +65,11 @@ public class CostMatrixVRPTW {
         Service[] services = new Service[serviceNumber];
 
         for (int i = 0; i <= serviceNumber - 1; i++) {
-            services[i] = Service.Builder.newInstance(Integer.toString(i)).addSizeDimension(0, 1).setServiceTime(3).setTimeWindow(TimeWindow.newInstance(5, 20)).setLocation(Location.newInstance(Integer.toString(i + 1))).build();
-
+            services[i] = Service.Builder.newInstance(Integer.toString(i))
+                    .addSizeDimension(0, 1)
+                    .setServiceTime(3)
+                    .setTimeWindow(TimeWindow.newInstance(5, 20))
+                    .setLocation(Location.newInstance(Integer.toString(i + 1))).build();
         }
 
 
@@ -96,7 +97,8 @@ public class CostMatrixVRPTW {
 		 * 2,3,1.0
 		 */
         //define a matrix-builder building a symmetric matrix
-        VehicleRoutingTransportCostsMatrix.Builder costMatrixBuilder = VehicleRoutingTransportCostsMatrix.Builder.newInstance(true);
+        VehicleRoutingTransportCostsMatrix.Builder costMatrixBuilder =
+                VehicleRoutingTransportCostsMatrix.Builder.newInstance(true);
         costMatrixBuilder.addTransportDistance("0", "1", 10.0);
         costMatrixBuilder.addTransportDistance("0", "2", 20.0);
         costMatrixBuilder.addTransportDistance("0", "3", 5.0);
@@ -114,7 +116,8 @@ public class CostMatrixVRPTW {
         VehicleRoutingTransportCosts costMatrix = costMatrixBuilder.build();
 
         VehicleRoutingProblem.Builder vrp = VehicleRoutingProblem.Builder.newInstance();
-        vrp.setFleetSize(VehicleRoutingProblem.FleetSize.FINITE).setRoutingCost(costMatrix);
+        vrp.setFleetSize(VehicleRoutingProblem.FleetSize.FINITE)
+                .setRoutingCost(costMatrix);
 
         for (int i = 0; i <= vehicleNumber - 1; i++) {
             vrp.addVehicle(vehicles[i]);
