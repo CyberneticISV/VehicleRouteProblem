@@ -35,12 +35,20 @@ public class DemoController {
 	 */
 	private String filePath = "/resources/css/bootstrap.min.css";
 
+	private CostMatrixVRPTW  costMatrixVRPTW = new CostMatrixVRPTW();
+
 	@RequestMapping(value = "/calculate", method = RequestMethod.GET)
 	public void index(@RequestParam("vehicleNumber") int vehicleNumber, Principal principal,
 						HttpServletRequest request,
 						HttpServletResponse response) throws IOException {
-		CostMatrixVRPTW.calculate(vehicleNumber);
+		costMatrixVRPTW.calculate(vehicleNumber);
 
+		downoalFile(request, response, filePath);
+/*
+		LOGGER.info(new MapQuestClient().getRoute().findValue(DISTANCE).toString());*/
+	}
+
+	private static void downoalFile(HttpServletRequest request, HttpServletResponse response, String filePath) throws IOException {
 		ServletContext context = request.getServletContext();
 		String appPath = context.getRealPath("");
 		System.out.println("appPath = " + appPath);
@@ -82,7 +90,5 @@ public class DemoController {
 
 		inputStream.close();
 		outStream.close();
-
-		LOGGER.info(new MapQuestClient().getRoute().findValue(DISTANCE).toString());
 	}
 }

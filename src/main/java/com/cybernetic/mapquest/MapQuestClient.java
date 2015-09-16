@@ -1,5 +1,6 @@
 package com.cybernetic.mapquest;
 
+import com.cybernetic.mapquest.constants.AdvancedRoutingOptions;
 import com.cybernetic.mapquest.constants.BasicRoutingOptions;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Maps;
@@ -19,12 +20,13 @@ public class MapQuestClient {
     public static final String ROUTE_URL = new StringBuilder(MAP_QUEST_API_URL).append("route").toString();
     public static final String KEY_TO_USE = "h1BmEGiJsGiFyiMpGCSRpB2DFYoIVDkW";
 
-    public JsonNode getRoute() {
+    public JsonNode getRoute(String from, String to) {
         RestClient client = RestClient.builder().build();
         Map<String, String> params = Maps.newHashMap();
         params.put(BasicRoutingOptions.KEY, KEY_TO_USE);
-        params.put(BasicRoutingOptions.FROM, "Lancaster,PA");
-        params.put(BasicRoutingOptions.TO, "York,PA");
+        params.put(BasicRoutingOptions.FROM, from);
+        params.put(BasicRoutingOptions.TO, to);
+        params.put(AdvancedRoutingOptions.UNIT, "k");
 
         JsonNode node;
         try {

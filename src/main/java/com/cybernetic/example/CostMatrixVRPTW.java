@@ -1,22 +1,12 @@
 package com.cybernetic.example;
 
-/*******************************************************************************
- * Copyright (C) 2014  Stefan Schroeder
- * <p>
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3.0 of the License, or (at your option) any later version.
- * <p>
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library.  If not, see <http://www.gnu.org/licenses/>.
- ******************************************************************************/
-
+import com.cybernetic.example.dao.ClientDAO;
+import com.cybernetic.example.dao.OrderDAO;
+import com.cybernetic.example.entities.Client;
+import com.cybernetic.example.entities.Order;
+import com.cybernetic.mapquest.MapQuestClient;
+import com.cybernetic.mapquest.constants.RouteResponseParameters;
+import com.fasterxml.jackson.databind.JsonNode;
 import jsprit.core.algorithm.VehicleRoutingAlgorithm;
 import jsprit.core.algorithm.io.VehicleRoutingAlgorithms;
 import jsprit.core.problem.Location;
@@ -32,100 +22,58 @@ import jsprit.core.reporting.SolutionPrinter;
 import jsprit.core.util.Solutions;
 import jsprit.core.util.VehicleRoutingTransportCostsMatrix;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class CostMatrixVRPTW {
 
-    public static void calculate(int vehicleNumber) {
+    private static final int MIN_CAPACITY_DIMENSION = 0;
+    private static final int MAX_CAPACITY_DIMENSION = 15;
+    private static final int DEFAULT_COST_PER_DISTANCE = 1;
+
+    //describe depo location
+    private static final Location DEPO = Location.newInstance("0");
+
+    //describe default vehicle type
+    private static final VehicleType DEFAULT_VEHICLE_TYPE = VehicleTypeImpl.Builder.newInstance("default")
+            .addCapacityDimension(MIN_CAPACITY_DIMENSION, MAX_CAPACITY_DIMENSION)
+            .setCostPerDistance(DEFAULT_COST_PER_DISTANCE)
+            .build();
+    private static double averageServiceTime = 3.0;
+
+    private OrderDAO orderDAO = new OrderDAO();
+    private ClientDAO clientDAO = new ClientDAO();
+    private MapQuestClient mapQuestClient = new MapQuestClient();
+
+    public void calculate(int vehicleNumber) {
         /*
-		 * some preparation - create output folder
+         * some preparation - create output folder
 		 */
+        //TODO:Remake to create folder in right place
         Examples.createOutputFolder();
 
-        //describe vehicle type
-        VehicleType type = VehicleTypeImpl.Builder.newInstance("type")
-                .addCapacityDimension(0, 15)
-                .setCostPerDistance(1)
-                .build();
+        List<VehicleImpl> vehicles = prepareVehicles(vehicleNumber);
 
-        //describe depo location
-        Location depo = Location.newInstance("0");
-
-        VehicleImpl[] vehicles = new VehicleImpl[vehicleNumber];
-
-        for (int i = 0; i <= vehicleNumber - 1; i++) {
-            vehicles[i] = VehicleImpl.Builder.newInstance("vehicle" + Integer.toString(i))
-                    .setStartLocation(depo)
-                    .setType(type)
-                    .setReturnToDepot(false)
-                    .build();
+        List<Service> services = new ArrayList<>();
+        Map<String, Order> orders = orderDAO.getAllOrders();
+        for (Map.Entry<String, Order> entry : orders.entrySet()) {
+            System.out.println(entry.getKey() + "/" + entry.getValue());
+            Order order = entry.getValue();
+            addNormalizedOrder(services, order);
         }
 
-        int serviceNumber = 3;
-        Service[] services = new Service[serviceNumber];
+        Map<String, Client> clients = clientDAO.getAllClients();
 
-        for (int i = 0; i <= serviceNumber - 1; i++) {
-            services[i] = Service.Builder.newInstance(Integer.toString(i))
-                    .addSizeDimension(0, 1)
-                    .setServiceTime(3)
-                    .setTimeWindow(TimeWindow.newInstance(5, 20))
-                    .setLocation(Location.newInstance(Integer.toString(i + 1))).build();
-        }
-
-
-		/*Service s1 = Service.Builder.newInstance("1").addSizeDimension(0, 1).setLocation(Location.newInstance("1")).build();
-		Service s2 = Service.Builder.newInstance("2").addSizeDimension(0, 1).setLocation(Location.newInstance("2")).build();
-		Service s3 = Service.Builder.newInstance("3").addSizeDimension(0, 1).setLocation(Location.newInstance("3")).build();
-		*/
-
-		/*
-		 * Assume the following symmetric distance-matrix
-		 * from,to,distance
-		 * 0,1,10.0
-		 * 0,2,20.0
-		 * 0,3,5.0
-		 * 1,2,4.0
-		 * 1,3,1.0
-		 * 2,3,2.0
-		 *
-		 * and this time-matrix
-		 * 0,1,5.0
-		 * 0,2,10.0
-		 * 0,3,2.5
-		 * 1,2,2.0
-		 * 1,3,0.5
-		 * 2,3,1.0
-		 */
-        //define a matrix-builder building a symmetric matrix
-        VehicleRoutingTransportCostsMatrix.Builder costMatrixBuilder =
-                VehicleRoutingTransportCostsMatrix.Builder.newInstance(true);
-        costMatrixBuilder.addTransportDistance("0", "1", 10.0);
-        costMatrixBuilder.addTransportDistance("0", "2", 20.0);
-        costMatrixBuilder.addTransportDistance("0", "3", 5.0);
-        costMatrixBuilder.addTransportDistance("1", "2", 4.0);
-        costMatrixBuilder.addTransportDistance("1", "3", 1.0);
-        costMatrixBuilder.addTransportDistance("2", "3", 2.0);
-
-        costMatrixBuilder.addTransportTime("0", "1", 10.0);
-        costMatrixBuilder.addTransportTime("0", "2", 20.0);
-        costMatrixBuilder.addTransportTime("0", "3", 5.0);
-        costMatrixBuilder.addTransportTime("1", "2", 4.0);
-        costMatrixBuilder.addTransportTime("1", "3", 1.0);
-        costMatrixBuilder.addTransportTime("2", "3", 2.0);
-
-        VehicleRoutingTransportCosts costMatrix = costMatrixBuilder.build();
+        VehicleRoutingTransportCosts costMatrix = getVehicleRoutingTransportCosts(clients, mapQuestClient);
 
         VehicleRoutingProblem.Builder vrp = VehicleRoutingProblem.Builder.newInstance();
         vrp.setFleetSize(VehicleRoutingProblem.FleetSize.FINITE)
                 .setRoutingCost(costMatrix);
 
-        for (int i = 0; i <= vehicleNumber - 1; i++) {
-            vrp.addVehicle(vehicles[i]);
-        }
-
-        for (int i = 0; i <= serviceNumber - 1; i++) {
-            vrp.addJob(services[i]);
-        }
+        vrp.addAllVehicles(vehicles);
+        vrp.addAllJobs(services);
 
         VehicleRoutingProblem problem = vrp.build();
         VehicleRoutingAlgorithm vra = VehicleRoutingAlgorithms.readAndCreateAlgorithm(problem, "input/fastAlgo.xml");
@@ -135,8 +83,66 @@ public class CostMatrixVRPTW {
         //SolutionPrinter.print(Solutions.bestOf(solutions));
         SolutionPrinter.print(problem, bestSolution, SolutionPrinter.Print.VERBOSE);
         //new Plotter(vrp, Solutions.bestOf(solutions)).plot("output/yo.png", "po");
-
     }
 
+    /**
+     * Builds non-static time and distance cost matrix based on preset locations (clients)
+     *
+     * @param clients the Map with clients
+     * @param mapQuestClient the Map with clients
+     * @return  VehicleRoutingTransportCosts object with time and distance cost matrix
+     * */
+    private static VehicleRoutingTransportCosts getVehicleRoutingTransportCosts(Map<String, Client> clients,
+                                                                                MapQuestClient mapQuestClient) {
+        VehicleRoutingTransportCostsMatrix.Builder costMatrixBuilder =
+                VehicleRoutingTransportCostsMatrix.Builder.newInstance(true);
+        for (Map.Entry<String, Client> entry : clients.entrySet()) {
+            for (Map.Entry<String, Client> subEntry : clients.entrySet()) {
+                if (!entry.getKey().equals(subEntry.getKey())) {
+                    String from = entry.getValue().getLatitude() + "," + entry.getValue().getLongitude();
+                    String to = subEntry.getValue().getLatitude() + "," + subEntry.getValue().getLongitude();
+                    JsonNode result = mapQuestClient.getRoute(from, to);
+                    costMatrixBuilder.addTransportDistance(entry.getKey(), subEntry.getKey(), result.findValue(RouteResponseParameters.DISTANCE).doubleValue());
+                    costMatrixBuilder.addTransportTime(entry.getKey(), subEntry.getKey(), result.findValue(RouteResponseParameters.TIME).doubleValue() / 60);
+                }
+            }
+        }
+        return costMatrixBuilder.build();
+    }
+
+    private void addNormalizedOrder(List<Service> services, Order order) {
+        Location location = Location.newInstance(order.getLocationId());
+        if (order.getDimensionValue() < MAX_CAPACITY_DIMENSION) {
+            services.add(Service.Builder.newInstance("service" + order.getId())
+                    .addSizeDimension(0, order.getDimensionValue())
+                    .setServiceTime(averageServiceTime)
+                    .setTimeWindow(TimeWindow.newInstance(order.getStartTime(), order.getEndTime()))
+                    .setLocation(location).build());
+        } else {
+            int i = 0;
+            int dimensionValue = order.getDimensionValue();
+            while (dimensionValue > MAX_CAPACITY_DIMENSION) {
+                services.add(Service.Builder.newInstance("service_" + order.getId() + "_" + ++i)
+                        .addSizeDimension(0, MAX_CAPACITY_DIMENSION)
+                        .setServiceTime(averageServiceTime)
+                        .setTimeWindow(TimeWindow.newInstance(order.getStartTime(), order.getEndTime()))
+                        .setLocation(location).build());
+                dimensionValue -= MAX_CAPACITY_DIMENSION;
+            }
+        }
+    }
+
+    private static List<VehicleImpl> prepareVehicles(int vehicleNumber) {
+        List<VehicleImpl> vehicles = new ArrayList<>(vehicleNumber);
+
+        for (int i = 0; i <= vehicleNumber - 1; i++) {
+            vehicles.add(VehicleImpl.Builder.newInstance("vehicle" + Integer.toString(i))
+                    .setStartLocation(DEPO)
+                    .setType(DEFAULT_VEHICLE_TYPE)
+                    .setReturnToDepot(false)
+                    .build());
+        }
+        return vehicles;
+    }
 }
 
