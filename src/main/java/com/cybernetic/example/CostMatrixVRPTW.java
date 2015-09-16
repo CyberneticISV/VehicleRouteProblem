@@ -41,6 +41,9 @@ public class CostMatrixVRPTW {
             .addCapacityDimension(MIN_CAPACITY_DIMENSION, MAX_CAPACITY_DIMENSION)
             .setCostPerDistance(DEFAULT_COST_PER_DISTANCE)
             .build();
+
+    private static final boolean IS_SYMMETRIC_MATRIX = false;
+
     private static double averageServiceTime = 3.0;
 
     private OrderDAO orderDAO = new OrderDAO();
@@ -95,7 +98,7 @@ public class CostMatrixVRPTW {
     private static VehicleRoutingTransportCosts getVehicleRoutingTransportCosts(Map<String, Client> clients,
                                                                                 MapQuestClient mapQuestClient) {
         VehicleRoutingTransportCostsMatrix.Builder costMatrixBuilder =
-                VehicleRoutingTransportCostsMatrix.Builder.newInstance(true);
+                VehicleRoutingTransportCostsMatrix.Builder.newInstance(IS_SYMMETRIC_MATRIX);
         for (Map.Entry<String, Client> entry : clients.entrySet()) {
             for (Map.Entry<String, Client> subEntry : clients.entrySet()) {
                 if (!entry.getKey().equals(subEntry.getKey())) {
@@ -129,6 +132,11 @@ public class CostMatrixVRPTW {
                         .setLocation(location).build());
                 dimensionValue -= MAX_CAPACITY_DIMENSION;
             }
+            services.add(Service.Builder.newInstance("service" + order.getId() + "_" + ++i)
+                    .addSizeDimension(0, dimensionValue)
+                    .setServiceTime(averageServiceTime)
+                    .setTimeWindow(TimeWindow.newInstance(order.getStartTime(), order.getEndTime()))
+                    .setLocation(location).build());
         }
     }
 

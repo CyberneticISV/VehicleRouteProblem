@@ -2,6 +2,12 @@ package com.cybernetic.home;
 
 import com.cybernetic.example.CostMatrixVRPTW;
 import com.cybernetic.mapquest.MapQuestClient;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -41,7 +47,7 @@ public class DemoController {
 	public void index(@RequestParam("vehicleNumber") int vehicleNumber, Principal principal,
 						HttpServletRequest request,
 						HttpServletResponse response) throws IOException {
-		costMatrixVRPTW.calculate(vehicleNumber);
+		/*costMatrixVRPTW.calculate(vehicleNumber);*/
 
 		downoalFile(request, response, filePath);
 /*
@@ -49,7 +55,7 @@ public class DemoController {
 	}
 
 	private static void downoalFile(HttpServletRequest request, HttpServletResponse response, String filePath) throws IOException {
-		ServletContext context = request.getServletContext();
+/*		ServletContext context = request.getServletContext();
 		String appPath = context.getRealPath("");
 		System.out.println("appPath = " + appPath);
 
@@ -59,13 +65,41 @@ public class DemoController {
 		FileInputStream inputStream = new FileInputStream(downloadFile);
 
 		// get MIME type of the file
-		String mimeType = context.getMimeType(fullPath);
-		if (mimeType == null) {
+		String mimeType = context.getMimeType(fullPath);*/
+/*		if (mimeType == null) {
 			// set to binary type if MIME mapping not found
 			mimeType = "application/octet-stream";
 		}
-		System.out.println("MIME type: " + mimeType);
+		System.out.println("MIME type: " + mimeType);*/
 
+/*		File downloadFile = new File(fullPath);*/
+		response.setContentType("application/vnd.ms-excel");
+		response.setHeader("Content-Disposition", "attachment; filename=DemoSolution.xls");
+		SXSSFWorkbook workbook = new SXSSFWorkbook();
+		HSSFSheet sheet = workbook.createSheet("FirstSheet");
+
+		HSSFRow rowhead = sheet.createRow((short)0);
+		rowhead.createCell(0).setCellValue("No.");
+		rowhead.createCell(1).setCellValue("Name");
+		rowhead.createCell(2).setCellValue("Address");
+		rowhead.createCell(3).setCellValue("Email");
+
+		HSSFRow row = sheet.createRow((short)1);
+		row.createCell(0).setCellValue("1");
+		row.createCell(1).setCellValue("Sankumarsingh");
+		row.createCell(2).setCellValue("India");
+		row.createCell(3).setCellValue("sankumarsingh@gmail.com");
+
+		ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
+		workbook.write(outByteStream);
+
+		byte[] outArray = outByteStream.toByteArray();
+		response.setContentLength(outArray.length);
+		response.setHeader("Expires:", "0");
+		OutputStream outStream = response.getOutputStream();
+		outStream.write(outArray);
+		outStream.flush();
+/*
 		// set content attributes for the response
 		response.setContentType(mimeType);
 		response.setContentLength((int) downloadFile.length());
@@ -89,6 +123,6 @@ public class DemoController {
 		}
 
 		inputStream.close();
-		outStream.close();
+		outStream.close();*/
 	}
 }

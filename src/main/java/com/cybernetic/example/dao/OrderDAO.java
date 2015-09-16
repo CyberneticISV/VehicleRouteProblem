@@ -11,23 +11,25 @@ public class OrderDAO {
         int orderId = 0;
         ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 30, 60));
         ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 60, 90));
-/*        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 90, 120));
+/*
+        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 90, 120));
+        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 30, 60));
+        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 60, 90));
+        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 60, 90));
+        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 60, 90));
+        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 30, 60));
+        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 90, 120));
+        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 60, 90));
         ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 30, 60));
         ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 60, 90));
         ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 60, 90));
-        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 60, 90));
-        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 30, 60));
-        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 90, 120));
-        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 60, 90));
-        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 30, 60));
-        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 60, 90));
-        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 60, 90));
         ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 90, 120));
         ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 60, 90));
         ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 90, 120));
         ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 30, 60));
         ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 90, 120));
-        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 30, 60));*/
+        ordersMap.put(Integer.toString(++orderId), new Order(Integer.toString(orderId), Integer.toString(++locationId), 1, 30, 60));
+*/
     }
     public OrderDAO() {
     }
