@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>DEMO</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="../../../resources/css/bootstrap.min.css" rel="stylesheet" media="screen" th:href="@{/resources/css/bootstrap.min.css}"/>
+    <link href="../../../resources/css/core.css" rel="stylesheet" media="screen" th:href="@{/resources/css/core.css}" />
+</head>
+<body>
+<form class="form-narrow form-horizontal" action="/calculate" method="get">
+    <fieldset>
+        <legend>Generate Report</legend>
+        <div class="form-group">
+            <label for="vehicleNumber" class="col-lg-2 control-label">Email</label>
+            <div class="col-lg-10">
+                <input type="text" class="form-control" id="vehicleNumber" placeholder="Vehicle Number" name="vehicleNumber" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10">
+                <button type="submit" class="btn btn-default">Download report</button>
+            </div>
+        </div>
+    </fieldset>
+</form>
+</body>
+</html>

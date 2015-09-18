@@ -67,8 +67,8 @@
 
         <dependency>
             <groupId>org.apache.poi</groupId>
-            <artifactId>poi-excelant</artifactId>
-            <version>3.10-FINAL</version>
+            <artifactId>poi</artifactId>
+            <version>3.2-FINAL</version>
         </dependency>
 
         <!-- Spring -->

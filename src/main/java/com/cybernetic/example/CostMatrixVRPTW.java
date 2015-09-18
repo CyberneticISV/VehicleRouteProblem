@@ -22,10 +22,7 @@ import jsprit.core.reporting.SolutionPrinter;
 import jsprit.core.util.Solutions;
 import jsprit.core.util.VehicleRoutingTransportCostsMatrix;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CostMatrixVRPTW {
 
@@ -50,13 +47,7 @@ public class CostMatrixVRPTW {
     private ClientDAO clientDAO = new ClientDAO();
     private MapQuestClient mapQuestClient = new MapQuestClient();
 
-    public void calculate(int vehicleNumber) {
-        /*
-         * some preparation - create output folder
-		 */
-        //TODO:Remake to create folder in right place
-        Examples.createOutputFolder();
-
+    public Map<String, Object> calculate(int vehicleNumber) {
         List<VehicleImpl> vehicles = prepareVehicles(vehicleNumber);
 
         List<Service> services = new ArrayList<>();
@@ -78,14 +69,20 @@ public class CostMatrixVRPTW {
         vrp.addAllVehicles(vehicles);
         vrp.addAllJobs(services);
 
+        Map<String, Object> result = new HashMap<>();
+
         VehicleRoutingProblem problem = vrp.build();
         VehicleRoutingAlgorithm vra = VehicleRoutingAlgorithms.readAndCreateAlgorithm(problem, "input/fastAlgo.xml");
 
         Collection<VehicleRoutingProblemSolution> solutions = vra.searchSolutions();
         VehicleRoutingProblemSolution bestSolution = Solutions.bestOf(solutions);
-        //SolutionPrinter.print(Solutions.bestOf(solutions));
+
+        result.put("problem", problem);
+        result.put("solution", bestSolution);
         SolutionPrinter.print(problem, bestSolution, SolutionPrinter.Print.VERBOSE);
-        //new Plotter(vrp, Solutions.bestOf(solutions)).plot("output/yo.png", "po");
+
+
+        return result;
     }
 
     /**
