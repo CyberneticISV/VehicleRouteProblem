@@ -81,7 +81,6 @@ public class CostMatrixVRPTW {
         result.put("solution", bestSolution);
         SolutionPrinter.print(problem, bestSolution, SolutionPrinter.Print.VERBOSE);
 
-
         return result;
     }
 

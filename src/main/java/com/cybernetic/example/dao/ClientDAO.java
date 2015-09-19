@@ -15,7 +15,7 @@ public class ClientDAO {
 
         clientMap.put(Integer.toString(++clientId), new Client(Integer.toString(clientId), "3.170417", "101.697239"));
         clientMap.put(Integer.toString(++clientId), new Client(Integer.toString(clientId), "3.120180", "101.676486"));
-/*        clientMap.put(Integer.toString(++clientId), new Client(Integer.toString(clientId), "3.171271", "101.659408"));
+        clientMap.put(Integer.toString(++clientId), new Client(Integer.toString(clientId), "3.171271", "101.659408"));
         clientMap.put(Integer.toString(++clientId), new Client(Integer.toString(clientId), "3.164101", "101.692416"));
         clientMap.put(Integer.toString(++clientId), new Client(Integer.toString(clientId), "3.150884", "101.663927"));
         clientMap.put(Integer.toString(++clientId), new Client(Integer.toString(clientId), "3.132920", "101.675814"));
@@ -35,7 +35,7 @@ public class ClientDAO {
         clientMap.put(Integer.toString(++clientId), new Client(Integer.toString(clientId), "3.094823", "101.614300"));
         clientMap.put(Integer.toString(++clientId), new Client(Integer.toString(clientId), "3.129285", "101.620516"));
         clientMap.put(Integer.toString(++clientId), new Client(Integer.toString(clientId), "3.175605", "101.659517"));
-        clientMap.put(Integer.toString(++clientId), new Client(Integer.toString(clientId), "3.170979", "101.665914"));*/
+        clientMap.put(Integer.toString(++clientId), new Client(Integer.toString(clientId), "3.170979", "101.665914"));
    }
 
     public ClientDAO() {
